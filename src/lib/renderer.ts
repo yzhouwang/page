@@ -5,6 +5,7 @@
  * Physics (Phase 2) will add CSS transforms for displacement.
  */
 import type { LayoutCell, ContentNode } from './types';
+import { filledBlocks } from './lang-blocks';
 
 /**
  * Render the Mondrian grid into the container element.
@@ -166,15 +167,19 @@ function renderLanguages(node: ContentNode): string {
     (a: any, b: any) => b.proficiency - a.proficiency
   );
   const langCards = langs
-    .map(
-      (l: any) => `
+    .map((l: any) => {
+      const filled = filledBlocks(l.proficiency);
+      const blocks = Array.from({ length: 5 }, (_, i) =>
+        `<div class="lang-block ${i < filled ? 'lang-block--filled' : ''}"></div>`
+      ).join('');
+      return `
     <div class="lang-card ${l.level === 'native' ? 'lang-card--native' : ''}">
       <div class="lang-glyph">${l.glyph}</div>
       <div class="lang-name">${l.name}</div>
-      <div class="lang-bar"><div class="lang-fill" style="width:${l.proficiency}%"></div></div>
+      <div class="lang-blocks">${blocks}</div>
     </div>
-  `
-    )
+  `;
+    })
     .join('');
 
   return `

@@ -23,6 +23,8 @@ const SPRING_DAMPING = 0.15;
 const REPULSION_STRENGTH = 0.003;
 const DISPLACEMENT_THRESHOLD = 2; // px — below this, cell is "at rest"
 const MOUSE_OFFSCREEN = -9999;
+const WAVE_NUDGE_FORCE = 0.0008;
+const WAVE_DELAY_MS = 200;
 
 interface CellPhysics {
   el: HTMLElement;
@@ -191,8 +193,28 @@ export function initPhysics(container: HTMLElement): PhysicsInstance {
   Runner.run(runner, engine);
   raf = requestAnimationFrame(render);
 
+  // Signal interactivity: cursor hint + initial wave pulse
+  container.classList.add('physics-active');
+
+  // Gentle outward wave from center so cells visibly breathe on load
+  let waveTimeout: ReturnType<typeof setTimeout> | null = setTimeout(() => {
+    waveTimeout = null;
+    const cx = container.offsetWidth / 2;
+    const cy = container.offsetHeight / 2;
+    for (const cell of cells) {
+      const dx = cell.body.position.x - cx;
+      const dy = cell.body.position.y - cy;
+      const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+      Body.applyForce(cell.body, cell.body.position, {
+        x: (dx / dist) * WAVE_NUDGE_FORCE * cell.body.mass,
+        y: (dy / dist) * WAVE_NUDGE_FORCE * cell.body.mass,
+      });
+    }
+  }, WAVE_DELAY_MS);
+
   return {
     destroy() {
+      if (waveTimeout) { clearTimeout(waveTimeout); waveTimeout = null; }
       cancelAnimationFrame(raf);
       Runner.stop(runner);
       Matter.Events.off(engine, 'beforeUpdate', beforeUpdate);
@@ -201,6 +223,7 @@ export function initPhysics(container: HTMLElement): PhysicsInstance {
       document.removeEventListener('mousemove', onMouseMove);
       container.removeEventListener('mouseleave', onMouseLeave);
       document.removeEventListener('visibilitychange', onVisibilityChange);
+      container.classList.remove('physics-active');
 
       for (const cell of cells) {
         cell.el.style.transform = '';

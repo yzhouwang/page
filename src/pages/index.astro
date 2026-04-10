@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import { getCollection } from 'astro:content';
+import { filledBlocks } from '../lib/lang-blocks';
 
 const papers = await getCollection('papers');
 const projects = await getCollection('projects');
@@ -268,15 +269,20 @@ const contentData = JSON.stringify({
       </div>
 
       {
-        sortedLangs.map((l) => (
-          <div class={`l-cell ${l.data.level === 'native' ? 'l-native' : ''} reveal`} style="grid-row:4">
-            <div class="l-glyph">{l.data.glyph}</div>
-            <div class="l-label">{l.data.name}</div>
-            <div class="l-bar">
-              <div class="l-fill" style={`width:${l.data.proficiency}%`} />
+        sortedLangs.map((l) => {
+          const filled = filledBlocks(l.data.proficiency);
+          return (
+            <div class={`l-cell ${l.data.level === 'native' ? 'l-native' : ''} reveal`} style="grid-row:4">
+              <div class="l-glyph">{l.data.glyph}</div>
+              <div class="l-label">{l.data.name}</div>
+              <div class="l-blocks">
+                {[...Array(5)].map((_, i) => (
+                  <div class={`l-block ${i < filled ? 'l-block--filled' : ''}`} />
+                ))}
+              </div>
             </div>
-          </div>
-        ))
+          );
+        })
       }
 
       <div class="l-legend reveal">
@@ -345,6 +351,7 @@ const contentData = JSON.stringify({
     import type { ContentNode, SectionInput } from '../lib/types';
 
     const DESKTOP_BP = 1024;
+    const CROSSFADE_MS = 350; // sync with #css-grid-layout transition in mondrian.css
     const ACCENT_COLORS = ['blue', 'coral', 'yellow', 'lavender', 'sage', 'peach', 'rose'] as const;
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -430,30 +437,42 @@ const contentData = JSON.stringify({
 
     function switchToGrid() {
       if (currentMode === 'grid') return;
+      if (crossfadeTimeout) { clearTimeout(crossfadeTimeout); crossfadeTimeout = null; }
       if (physicsTimeout) { clearTimeout(physicsTimeout); physicsTimeout = null; }
       if (physics) { physics.destroy(); physics = null; }
       currentMode = 'grid';
-      document.getElementById('css-grid-layout')!.style.display = '';
-      document.getElementById('generative-layout')!.style.display = 'none';
+
+      const gridEl = document.getElementById('css-grid-layout')!;
+      const genEl = document.getElementById('generative-layout')!;
+
+      genEl.style.display = 'none';
+      gridEl.style.display = '';
+      gridEl.style.opacity = '0';
+      requestAnimationFrame(() => {
+        gridEl.style.opacity = '1';
+      });
     }
 
     let physicsTimeout: ReturnType<typeof setTimeout> | null = null;
+    let crossfadeTimeout: ReturnType<typeof setTimeout> | null = null;
 
     function startPhysics(container: HTMLElement) {
       if (prefersReducedMotion || physics) return;
       const cellEls = container.querySelectorAll('.cell');
-      const animDuration = generativeRendered ? 0 : (cellEls.length * 60) + 600;
+      const baseDelay = generativeRendered ? 0 : (cellEls.length * 60) + 600;
+      // Physics must wait for crossfade to complete so container is visible
+      const delay = Math.max(baseDelay, CROSSFADE_MS + 50);
       physicsTimeout = setTimeout(() => {
         physicsTimeout = null;
         if (currentMode === 'generative') {
           physics = initPhysics(container);
         }
-      }, animDuration);
+      }, delay);
     }
 
     function switchToGenerative() {
-      document.getElementById('css-grid-layout')!.style.display = 'none';
-      document.getElementById('generative-layout')!.style.display = '';
+      const gridEl = document.getElementById('css-grid-layout')!;
+      const genEl = document.getElementById('generative-layout')!;
       currentMode = 'generative';
 
       const container = document.getElementById('mondrian-container')!;
@@ -472,6 +491,16 @@ const contentData = JSON.stringify({
           (el as HTMLElement).style.animationDelay = `${i * 0.06}s`;
         });
       }
+
+      // Smooth crossfade: fade out grid, then reveal generative
+      gridEl.style.opacity = '0';
+      crossfadeTimeout = setTimeout(() => {
+        crossfadeTimeout = null;
+        if (currentMode !== 'generative') return; // guard against stale callback
+        gridEl.style.display = 'none';
+        gridEl.style.opacity = '';
+        genEl.style.display = '';
+      }, CROSSFADE_MS);
 
       startPhysics(container);
       generativeRendered = true;

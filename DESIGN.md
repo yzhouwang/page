@@ -117,8 +117,13 @@
 ## Motion
 - **Approach:** The physics engine IS the motion system. Matter.js drives all movement.
 - **No CSS animations** except:
+  - Layout crossfade (opacity 0.35s ease, CSS Grid → generative on desktop load)
+  - Cell entrance reveal (@keyframes cellReveal, staggered 60ms per cell)
   - Cube rotation (@keyframes, pauses on prefers-reduced-motion)
   - Hover transitions (background-color, 0.2-0.3s ease)
+- **Physics interaction hints:**
+  - cursor: grab on all cells when physics is active
+  - Initial wave pulse (outward force from center) on physics init signals interactivity
 - **Physics easing:** Spring constraints with damping 0.2 (natural settle, not eased curves)
 - **Duration reference:** Cells return to anchor in ~0.3-0.5s after displacement
 - **prefers-reduced-motion:** All physics disabled. Static layout. Cube pauses. Hover transitions remain.
@@ -148,3 +153,6 @@ The breathing range of the grid (--line + displacement) is a first-class design 
 | 2026-04-10 | JetBrains Mono for metadata | Both outside voices recommended a monospace accent. Signals systematic thinking. |
 | 2026-04-10 | 0px border-radius everywhere | Mondrian uses rectangles. No rounded corners, ever. |
 | 2026-04-10 | Physics displacement as design token | --max-displacement and --line-range are novel tokens that define the grid's breathing behavior. |
+| 2026-04-11 | Mondrian proficiency blocks over progress bars | 5 small squares per language replace continuous bars. Filled count = Math.round(proficiency/20). Matches grid aesthetic. |
+| 2026-04-11 | Layout crossfade transition | 350ms opacity fade from CSS Grid to generative layout prevents FOUC on desktop load. |
+| 2026-04-11 | Physics wave pulse on init | Gentle outward force nudge makes cells visibly breathe, signaling the interactive physics system. |
