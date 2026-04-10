@@ -1,0 +1,9 @@
+{
+  "name": "Compliance Agents",
+  "icon": "法",
+  "label": "Infrastructure",
+  "description": "Autonomous agents parsing regulatory documents. Semantic diff with Sinkhorn Optimal Transport for policy changes at scale.",
+  "tags": ["LLMs", "OT", "Agents"],
+  "priority": 6,
+  "color": "surface"
+}
