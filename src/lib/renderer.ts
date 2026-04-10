@@ -86,8 +86,8 @@ function renderHero(cell: LayoutCell): string {
         <h1 class="hero__name">Yuzhou<br>Wang</h1>
         <p class="hero__desc">Building systems that understand language. AI executive at <strong>SuperX AI</strong> in Hong Kong. UChicago CS &amp; Linguistics '25.</p>
         <div class="hero__ctas">
-          <a href="mailto:yu@example.com" class="btn btn--primary">Get in Touch</a>
-          <a href="https://github.com/yzhouwang" class="btn btn--secondary">GitHub</a>
+          <a href="mailto:yuzhouyw@gmail.com" class="btn btn--primary">Get in Touch</a>
+          <a href="https://github.com/yuzhouyw" class="btn btn--secondary">GitHub</a>
         </div>
       </div>
       ${
@@ -193,8 +193,8 @@ function renderCTA(): string {
       <h2 class="cta-title">Let's<br>collaborate.</h2>
       <p class="cta-desc">Open to research collaborations in low-resource NLP, computational morphology, and AI compliance systems.</p>
       <div class="cta-links">
-        <a href="mailto:yu@example.com" class="cta-link">Email</a>
-        <a href="https://github.com/yzhouwang" class="cta-link">GitHub</a>
+        <a href="mailto:yuzhouyw@gmail.com" class="cta-link">Email</a>
+        <a href="https://github.com/yuzhouyw" class="cta-link">GitHub</a>
         <a href="https://scholar.google.com" class="cta-link">Scholar</a>
         <a href="https://x.com" class="cta-link">Twitter</a>
       </div>

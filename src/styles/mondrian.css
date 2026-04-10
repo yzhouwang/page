@@ -236,10 +236,10 @@
   opacity: 0;
   animation: fadeIn 0.7s ease forwards 0.7s;
 }
-.h-strip-mint {
+.h-strip-accent {
   grid-column: 5;
   grid-row: 6;
-  background: var(--mint);
+  background: var(--coral);
   display: flex;
   align-items: center;
   justify-content: center;

@@ -86,7 +86,7 @@ const contentData = JSON.stringify({
         <div class="h-label">AI &times; Computational Linguistics</div>
         <h1>Yuzhou<br />Wang</h1>
         <p class="h-desc">
-          Building systems that understand language. AI executive at <a href="#">SuperX AI</a> in Hong
+          Building systems that understand language. AI executive at <strong>SuperX AI</strong> in Hong
           Kong. UChicago CS &amp; Linguistics '25.
         </p>
         <div class="h-ctas">
@@ -144,7 +144,7 @@ const contentData = JSON.stringify({
         <span>9 Languages</span>
       </div>
       <div class="h-strip-yellow"></div>
-      <div class="h-strip-mint">2025</div>
+      <div class="h-strip-accent">2026</div>
     </div>
 
     <!-- ━━━ RESEARCH ━━━ -->
@@ -299,8 +299,8 @@ const contentData = JSON.stringify({
         <span class="cta-accent-glyph">語</span>
       </div>
       <div class="cta-links-row">
-        <a href="mailto:yu@example.com" class="cta-link">Email</a>
-        <a href="https://github.com/yzhouwang" class="cta-link">GitHub</a>
+        <a href="mailto:yuzhouyw@gmail.com" class="cta-link">Email</a>
+        <a href="https://github.com/yuzhouyw" class="cta-link">GitHub</a>
         <a href="https://scholar.google.com" class="cta-link">Scholar</a>
         <a href="https://x.com" class="cta-link">Twitter</a>
       </div>
@@ -308,7 +308,7 @@ const contentData = JSON.stringify({
 
     <!-- ━━━ FOOTER ━━━ -->
     <div class="mondrian-footer">
-      <div class="f-cell">&copy; 2025 Yuzhou Wang</div>
+      <div class="f-cell">&copy; 2026 Yuzhou Wang</div>
       <div class="f-blue"></div>
       <div class="f-cell" style="justify-content:center">Hong Kong</div>
       <div class="f-coral"></div>
@@ -324,11 +324,11 @@ const contentData = JSON.stringify({
         Yuzhou Wang
       </div>
       <div class="gen-nav-links">
-        <a href="#">Research</a>
-        <a href="#">Projects</a>
-        <a href="#">Languages</a>
+        <a href="#" data-scroll="research-feature">Research</a>
+        <a href="#" data-scroll="project-kintone-project">Projects</a>
+        <a href="#" data-scroll="languages">Languages</a>
       </div>
-      <a href="mailto:yu@example.com" class="gen-nav-cta">Contact</a>
+      <a href="mailto:yuzhouyw@gmail.com" class="gen-nav-cta">Contact</a>
     </nav>
     <div id="mondrian-container"></div>
   </div>
@@ -462,6 +462,15 @@ const contentData = JSON.stringify({
       switchToGenerative();
     }
 
+    // Generative nav: scroll to cell by data-scroll attribute
+    document.querySelectorAll('[data-scroll]').forEach((link) => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const target = document.querySelector(`[data-id="${(link as HTMLElement).dataset.scroll}"]`);
+        target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+
     // CSS Grid scroll reveal (for fallback mode)
     const revealObserver = new IntersectionObserver(
       (entries) => {
@@ -482,9 +491,8 @@ const contentData = JSON.stringify({
     window.addEventListener(
       'scroll',
       () => {
-        const pct = Math.round(
-          (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100
-        );
+        const denom = document.documentElement.scrollHeight - window.innerHeight;
+        const pct = denom > 0 ? Math.round((window.scrollY / denom) * 100) : 0;
         if (prog) prog.textContent = String(pct);
         sp?.classList.toggle('show', window.scrollY > 200);
       },
