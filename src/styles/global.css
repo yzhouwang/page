@@ -144,4 +144,12 @@ a:focus-visible {
     animation: none !important;
     transform: rotateY(25deg) rotateX(15deg);
   }
+  .cell {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .cell--displaced {
+    box-shadow: none !important;
+  }
 }

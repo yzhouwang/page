@@ -11,9 +11,11 @@
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.0",
-    "astro": "^4.16.0"
+    "astro": "^4.16.0",
+    "matter-js": "^0.20.0"
   },
   "devDependencies": {
+    "@types/matter-js": "^0.20.2",
     "vitest": "^3.2.4"
   }
 }
