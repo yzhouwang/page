@@ -1,0 +1,147 @@
+/* Design System — Yuzhou Wang Personal Site */
+/* Source of truth: DESIGN.md */
+
+:root {
+  /* Surfaces */
+  --surface: #F5F3EE;
+  --surface-alt: #EDEAE3;
+  --grid: #111111;
+
+  /* Text */
+  --text: #111111;
+  --text-muted: #555555;
+  --text-ghost: #999999;
+
+  /* Accents — layout colors */
+  --blue: #7CC2E2;
+  --blue-deep: #5AADCE;
+  --coral: #E89A7A;
+  --coral-deep: #D4835E;
+  --yellow: #E8D26E;
+  --lavender: #C8BBE8;
+  --sage: #B4D8B4;
+  --peach: #F0CCA8;
+  --rose: #E8A4B8;
+
+  /* Interaction state — NOT a layout color */
+  --mint: #72D4A4;
+
+  /* Grid system */
+  --line: 4px;
+  --max-displacement: 15px;
+
+  /* Spacing scale */
+  --sp-2xs: 4px;
+  --sp-xs: 8px;
+  --sp-sm: 16px;
+  --sp-md: 24px;
+  --sp-lg: 32px;
+  --sp-xl: 48px;
+  --sp-2xl: 56px;
+  --sp-3xl: 64px;
+
+  /* Typography */
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: 'Outfit', sans-serif;
+  --font-serif: 'Noto Serif JP', serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--grid);
+}
+
+body {
+  background: var(--grid);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  overflow-x: hidden;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+a:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: var(--yellow);
+  color: var(--text);
+}
+
+/* ━━━ Typography classes ━━━ */
+
+.hero__name {
+  font-family: var(--font-display);
+  font-size: clamp(56px, 8vw, 96px);
+  font-weight: 700;
+  line-height: 0.85;
+  letter-spacing: -3px;
+  margin-bottom: 28px;
+}
+
+.card-title {
+  font-family: var(--font-serif);
+  font-size: clamp(22px, 2.5vw, 30px);
+  font-weight: 900;
+  line-height: 1.25;
+  margin-bottom: 10px;
+}
+
+.meta-label {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--text-ghost);
+  margin-bottom: 16px;
+}
+
+.card-meta {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-ghost);
+}
+
+.card-year {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  color: var(--text-ghost);
+  margin-top: auto;
+  padding-top: 16px;
+}
+
+.card-desc {
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--text-muted);
+  line-height: 1.7;
+  margin-bottom: 16px;
+}
+
+/* ━━━ Reduced motion ━━━ */
+
+@media (prefers-reduced-motion: reduce) {
+  .cube {
+    animation: none !important;
+    transform: rotateY(25deg) rotateX(15deg);
+  }
+}
