@@ -8,8 +8,8 @@
  *
  * Design tokens (from DESIGN.md):
  *   --max-displacement: 15px
- *   --spring-stiffness: 0.02
- *   --spring-damping: 0.2
+ *   --spring-stiffness: 0.0002
+ *   --spring-damping: 0.15
  *   --cursor-radius: 350px
  */
 import Matter from 'matter-js';
@@ -22,14 +22,13 @@ const SPRING_STIFFNESS = 0.0002;
 const SPRING_DAMPING = 0.15;
 const REPULSION_STRENGTH = 0.003;
 const DISPLACEMENT_THRESHOLD = 2; // px — below this, cell is "at rest"
+const MOUSE_OFFSCREEN = -9999;
 
 interface CellPhysics {
   el: HTMLElement;
   body: Matter.Body;
   anchorX: number;
   anchorY: number;
-  baseLeft: number;
-  baseTop: number;
 }
 
 export interface PhysicsInstance {
@@ -59,6 +58,8 @@ export function initPhysics(container: HTMLElement): PhysicsInstance {
     const w = parseFloat(el.style.width);
     const h = parseFloat(el.style.height);
 
+    if (isNaN(left) || isNaN(top) || isNaN(w) || isNaN(h)) continue;
+
     // Center of the cell in layout coordinates
     const cx = left + w / 2;
     const cy = top + h / 2;
@@ -72,19 +73,12 @@ export function initPhysics(container: HTMLElement): PhysicsInstance {
 
     Composite.add(engine.world, body);
 
-    cells.push({
-      el,
-      body,
-      anchorX: cx,
-      anchorY: cy,
-      baseLeft: left,
-      baseTop: top,
-    });
+    cells.push({ el, body, anchorX: cx, anchorY: cy });
   }
 
   // Mouse state
-  let mouseX = -9999;
-  let mouseY = -9999;
+  let mouseX = MOUSE_OFFSCREEN;
+  let mouseY = MOUSE_OFFSCREEN;
 
   const onMouseMove = (e: MouseEvent) => {
     const rect = container.getBoundingClientRect();
@@ -93,8 +87,8 @@ export function initPhysics(container: HTMLElement): PhysicsInstance {
   };
 
   const onMouseLeave = () => {
-    mouseX = -9999;
-    mouseY = -9999;
+    mouseX = MOUSE_OFFSCREEN;
+    mouseY = MOUSE_OFFSCREEN;
   };
 
   // Listen on the document so we track the mouse even between cells
@@ -181,26 +175,38 @@ export function initPhysics(container: HTMLElement): PhysicsInstance {
     raf = requestAnimationFrame(render);
   };
 
+  // Pause Runner when tab is hidden to avoid burning CPU in background
+  const onVisibilityChange = () => {
+    if (document.hidden) {
+      Runner.stop(runner);
+      cancelAnimationFrame(raf);
+    } else {
+      Runner.run(runner, engine);
+      raf = requestAnimationFrame(render);
+    }
+  };
+  document.addEventListener('visibilitychange', onVisibilityChange);
+
   // Start
   Runner.run(runner, engine);
   raf = requestAnimationFrame(render);
 
-  // Cleanup
   return {
     destroy() {
       cancelAnimationFrame(raf);
       Runner.stop(runner);
+      Matter.Events.off(engine, 'beforeUpdate', beforeUpdate);
+      Matter.Events.off(engine, 'afterUpdate', afterUpdate);
       Engine.clear(engine);
       document.removeEventListener('mousemove', onMouseMove);
       container.removeEventListener('mouseleave', onMouseLeave);
-      Matter.Events.off(engine, 'beforeUpdate', beforeUpdate);
-      Matter.Events.off(engine, 'afterUpdate', afterUpdate);
+      document.removeEventListener('visibilitychange', onVisibilityChange);
 
-      // Reset transforms
       for (const cell of cells) {
         cell.el.style.transform = '';
         cell.el.classList.remove('cell--displaced');
       }
+      cells.length = 0;
     },
   };
 }

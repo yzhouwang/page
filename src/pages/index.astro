@@ -430,10 +430,25 @@ const contentData = JSON.stringify({
 
     function switchToGrid() {
       if (currentMode === 'grid') return;
+      if (physicsTimeout) { clearTimeout(physicsTimeout); physicsTimeout = null; }
       if (physics) { physics.destroy(); physics = null; }
       currentMode = 'grid';
       document.getElementById('css-grid-layout')!.style.display = '';
       document.getElementById('generative-layout')!.style.display = 'none';
+    }
+
+    let physicsTimeout: ReturnType<typeof setTimeout> | null = null;
+
+    function startPhysics(container: HTMLElement) {
+      if (prefersReducedMotion || physics) return;
+      const cellEls = container.querySelectorAll('.cell');
+      const animDuration = generativeRendered ? 0 : (cellEls.length * 60) + 600;
+      physicsTimeout = setTimeout(() => {
+        physicsTimeout = null;
+        if (currentMode === 'generative') {
+          physics = initPhysics(container);
+        }
+      }, animDuration);
     }
 
     function switchToGenerative() {
@@ -441,34 +456,25 @@ const contentData = JSON.stringify({
       document.getElementById('generative-layout')!.style.display = '';
       currentMode = 'generative';
 
-      if (generativeRendered) return;
-
       const container = document.getElementById('mondrian-container')!;
-      const vw = Math.min(window.innerWidth, 1600);
-      const vh = window.innerHeight;
-      const prng = createPRNG();
-      const { sections, allNodes } = buildSections(prng);
-      const cells = generateLayout(vw, vh, sections, prng);
-      const nodeMap = new Map(allNodes.map((n) => [n.id, n]));
-      renderGrid(container, cells, nodeMap);
 
-      // Stagger cell entrance animation by DOM order
-      const cellEls = container.querySelectorAll('.cell');
-      cellEls.forEach((el, i) => {
-        (el as HTMLElement).style.animationDelay = `${i * 0.06}s`;
-      });
+      if (!generativeRendered) {
+        const vw = Math.min(window.innerWidth, 1600);
+        const vh = window.innerHeight;
+        const prng = createPRNG();
+        const { sections, allNodes } = buildSections(prng);
+        const cells = generateLayout(vw, vh, sections, prng);
+        const nodeMap = new Map(allNodes.map((n) => [n.id, n]));
+        renderGrid(container, cells, nodeMap);
 
-      generativeRendered = true;
-
-      // Start physics after entrance animations complete (~15 cells * 0.06s + 0.6s anim)
-      if (!prefersReducedMotion) {
-        const animDuration = (cellEls.length * 60) + 600;
-        setTimeout(() => {
-          if (currentMode === 'generative') {
-            physics = initPhysics(container);
-          }
-        }, animDuration);
+        const cellEls = container.querySelectorAll('.cell');
+        cellEls.forEach((el, i) => {
+          (el as HTMLElement).style.animationDelay = `${i * 0.06}s`;
+        });
       }
+
+      startPhysics(container);
+      generativeRendered = true;
     }
 
     // Init: desktop gets generative, mobile keeps CSS Grid
