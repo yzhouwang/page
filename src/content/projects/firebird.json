@@ -1,0 +1,9 @@
+{
+  "name": "Firebird",
+  "icon": "火",
+  "label": "Culture",
+  "description": "Cultural criticism at the intersection of language, technology, and identity.",
+  "tags": ["Writing", "Criticism"],
+  "priority": 6,
+  "color": "coral"
+}

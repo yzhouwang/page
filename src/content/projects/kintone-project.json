@@ -1,0 +1,9 @@
+{
+  "name": "KINTONE",
+  "icon": "音",
+  "label": "Phonology",
+  "description": "Rule-based Kinyarwanda tone diacritization. Decomposes verb morphology and applies spreading, shifting, and Meeussen's Rule from YAML configs.",
+  "tags": ["Python", "YAML", "Zero-shot"],
+  "priority": 6,
+  "color": "surface"
+}

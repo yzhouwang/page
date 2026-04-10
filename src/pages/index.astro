@@ -1,0 +1,515 @@
+---
+import Base from '../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+const papers = await getCollection('papers');
+const projects = await getCollection('projects');
+const languages = await getCollection('languages');
+
+// Explicit display ordering (Astro collections return alphabetically by filename)
+const paperOrder = ['human-ai-writing', 'kintone', 'compliance-agents'];
+const sortedPapers = paperOrder
+  .map((id) => papers.find((p) => p.id === id))
+  .filter((p): p is NonNullable<typeof p> => p != null);
+
+const projectOrder = ['kintone-project', 'compliance-agents-project', 'firebird'];
+const sortedProjects = projectOrder
+  .map((id) => projects.find((p) => p.id === id))
+  .filter((p): p is NonNullable<typeof p> => p != null);
+
+const langOrder = [
+  'mandarin', 'english', 'japanese', 'french', 'cantonese',
+  'russian', 'korean', 'kinyarwanda', 'swahili',
+];
+const sortedLangs = langOrder
+  .map((id) => languages.find((l) => l.id === id))
+  .filter((l): l is NonNullable<typeof l> => l != null);
+
+// Grid positions for research papers (CSS Grid fallback)
+const paperPositions = [
+  { col: '1', row: '4' },
+  { col: '3', row: '4' },
+  { col: '1', row: '6' },
+];
+
+// Serialize content data for client-side generative engine
+const contentData = JSON.stringify({
+  papers: sortedPapers.map((p) => ({
+    id: p.id,
+    title: p.data.title,
+    venue: p.data.venue,
+    year: p.data.year,
+    authors: p.data.authors,
+    meta: p.data.meta,
+    color: p.data.color,
+  })),
+  projects: sortedProjects.map((p) => ({
+    id: p.id,
+    name: p.data.name,
+    icon: p.data.icon,
+    label: p.data.label,
+    description: p.data.description,
+    tags: p.data.tags,
+    color: p.data.color,
+  })),
+  languages: sortedLangs.map((l) => ({
+    glyph: l.data.glyph,
+    name: l.data.name,
+    level: l.data.level,
+    proficiency: l.data.proficiency,
+  })),
+});
+---
+
+<Base title="Yuzhou Wang">
+  <div class="scroll-progress" aria-hidden="true"><span id="progress">0</span>%</div>
+
+  <!-- ━━━ CSS GRID FALLBACK (visible by default, noscript-friendly) ━━━ -->
+  <div id="css-grid-layout">
+
+    <!-- ━━━ HERO ━━━ -->
+    <div class="mondrian-hero" id="top">
+      <nav class="h-nav">
+        <div class="h-nav-brand">
+          <div class="h-nav-mark">語</div>
+          Yuzhou Wang
+        </div>
+        <div class="h-nav-links">
+          <a href="#research">Research</a>
+          <a href="#projects">Projects</a>
+          <a href="#languages">Languages</a>
+        </div>
+        <a href="#contact" class="h-nav-cta">Contact</a>
+      </nav>
+
+      <div class="h-name">
+        <div class="h-label">AI &times; Computational Linguistics</div>
+        <h1>Yuzhou<br />Wang</h1>
+        <p class="h-desc">
+          Building systems that understand language. AI executive at <strong>SuperX AI</strong> in Hong
+          Kong. UChicago CS &amp; Linguistics '25.
+        </p>
+        <div class="h-ctas">
+          <a href="#research" class="h-cta-primary">View Research</a>
+          <a href="#contact" class="h-cta-secondary">Get in Touch</a>
+        </div>
+      </div>
+
+      <div class="h-blue">
+        <div class="cube-wrapper">
+          <div class="cube">
+            <div class="cube-face cube-face-front">
+              <span class="face-num">01</span>
+              <div class="face-label">NLP Research</div>
+              <div class="face-title">Language<br />Understanding</div>
+            </div>
+            <div class="cube-face cube-face-right">
+              <span class="face-num">02</span>
+              <div class="face-label">Low-Resource</div>
+              <div class="face-title">Kinyarwanda<br />Tone</div>
+            </div>
+            <div class="cube-face cube-face-back">
+              <span class="face-num">03</span>
+              <div class="face-label">Infrastructure</div>
+              <div class="face-title">Compliance<br />Agents</div>
+            </div>
+            <div class="cube-face cube-face-left">
+              <span class="face-num">04</span>
+              <div class="face-label">Speech</div>
+              <div class="face-title">Automatic<br />Recognition</div>
+            </div>
+            <div class="cube-face cube-face-top">
+              <span class="face-num">05</span>
+              <div class="face-label">Interaction</div>
+              <div class="face-title">Human&ndash;AI<br />Writing</div>
+            </div>
+            <div class="cube-face cube-face-bottom">
+              <span class="face-num">06</span>
+              <div class="face-label">Cultural</div>
+              <div class="face-title">Firebird<br />Magazine</div>
+            </div>
+          </div>
+        </div>
+        <span class="h-blue-label">Research Areas</span>
+      </div>
+
+      <div class="h-coral">
+        <span class="h-coral-num">04</span>
+        <span class="h-coral-label">Research Threads</span>
+      </div>
+
+      <div class="h-strip-white">
+        <span>UChicago '25</span>
+        <span>Hong Kong</span>
+        <span>9 Languages</span>
+      </div>
+      <div class="h-strip-yellow"></div>
+      <div class="h-strip-accent">2026</div>
+    </div>
+
+    <!-- ━━━ RESEARCH ━━━ -->
+    <div class="mondrian-research" id="research">
+      <div class="s-header reveal">
+        <div class="s-block" style="background:var(--blue)"></div>
+        <h2>Selected Research</h2>
+      </div>
+
+      {
+        sortedPapers.map((p, i) => {
+          const pos = paperPositions[i];
+          return (
+            <div class="r-cell reveal" style={`grid-column:${pos.col};grid-row:${pos.row}`}>
+              <div>
+                <div class="r-venue">{p.data.venue}</div>
+                <div class="r-title">{p.data.title}</div>
+                <div class="r-meta">
+                  {p.data.authors} &middot; {p.data.meta}
+                </div>
+              </div>
+              <div class="r-year">{p.data.year}</div>
+            </div>
+          );
+        })
+      }
+
+      <div class="r-feature reveal">
+        <span class="r-feature-ghost">04</span>
+        <div>
+          <div class="r-feature-label">Research Threads</div>
+          <div class="r-feature-title">Four domains,<br />one question:</div>
+          <div class="r-feature-desc">
+            How do we build machines that understand language the way humans do?
+          </div>
+        </div>
+        <div class="r-feature-stats">
+          <div>
+            <div class="r-stat-num">9</div>
+            <div class="r-stat-label">Languages</div>
+          </div>
+          <div>
+            <div class="r-stat-num">5</div>
+            <div class="r-stat-label">Papers</div>
+          </div>
+          <div>
+            <div class="r-stat-num">3</div>
+            <div class="r-stat-label">Systems</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="r-yellow reveal" style="grid-column:3;grid-row:6"></div>
+    </div>
+
+    <!-- ━━━ PROJECTS ━━━ -->
+    <div class="mondrian-projects" id="projects">
+      <div class="s-header reveal">
+        <div class="s-block" style="background:var(--coral)"></div>
+        <h2>Projects</h2>
+      </div>
+
+      {
+        sortedProjects[0] && (
+          <div class="p-hero reveal">
+            <div class="p-hero-icon">{sortedProjects[0].data.icon}</div>
+            <div>
+              <div class="p-label">{sortedProjects[0].data.label}</div>
+              <div class="p-name">{sortedProjects[0].data.name}</div>
+              <div class="p-desc">{sortedProjects[0].data.description}</div>
+              <div class="p-tags">
+                {sortedProjects[0].data.tags.map((t) => (
+                  <span>{t}</span>
+                ))}
+              </div>
+            </div>
+          </div>
+        )
+      }
+
+      {
+        sortedProjects[1] && (
+          <div class="p-mid reveal">
+            <div class="p-mid-icon">{sortedProjects[1].data.icon}</div>
+            <div class="p-label">{sortedProjects[1].data.label}</div>
+            <div class="p-name">{sortedProjects[1].data.name}</div>
+            <div class="p-desc">{sortedProjects[1].data.description}</div>
+            <div class="p-tags" style="margin-top:auto;padding-top:16px">
+              {sortedProjects[1].data.tags.map((t) => (
+                <span>{t}</span>
+              ))}
+            </div>
+          </div>
+        )
+      }
+
+      {
+        sortedProjects[2] && (
+          <div class="p-accent reveal">
+            <div class="p-accent-icon">{sortedProjects[2].data.icon}</div>
+            <div>
+              <div class="p-label">{sortedProjects[2].data.label}</div>
+              <div class="p-name">{sortedProjects[2].data.name}</div>
+              <div class="p-desc">{sortedProjects[2].data.description}</div>
+            </div>
+            <div class="p-tags" style="margin-top:16px">
+              {sortedProjects[2].data.tags.map((t) => (
+                <span>{t}</span>
+              ))}
+            </div>
+          </div>
+        )
+      }
+    </div>
+
+    <!-- ━━━ LANGUAGES ━━━ -->
+    <div class="mondrian-lang" id="languages">
+      <div class="s-header reveal" style="grid-column:1/-1;grid-row:2">
+        <div class="s-block" style="background:var(--yellow)"></div>
+        <h2>Nine languages, five scripts.</h2>
+      </div>
+
+      {
+        sortedLangs.map((l) => (
+          <div class={`l-cell ${l.data.level === 'native' ? 'l-native' : ''} reveal`} style="grid-row:4">
+            <div class="l-glyph">{l.data.glyph}</div>
+            <div class="l-label">{l.data.name}</div>
+            <div class="l-bar">
+              <div class="l-fill" style={`width:${l.data.proficiency}%`} />
+            </div>
+          </div>
+        ))
+      }
+
+      <div class="l-legend reveal">
+        <span class="lg-n">Native</span>
+        <span class="lg-f">Fluent</span>
+        <span class="lg-i">Intermediate</span>
+      </div>
+    </div>
+
+    <!-- ━━━ CTA ━━━ -->
+    <div class="mondrian-cta" id="contact">
+      <div class="cta-text reveal">
+        <h2>Let's<br />collaborate.</h2>
+        <p class="cta-sub">
+          Open to research collaborations in low-resource NLP, computational morphology, and AI
+          compliance systems.
+        </p>
+      </div>
+      <div class="cta-accent">
+        <span class="cta-accent-glyph">語</span>
+      </div>
+      <div class="cta-links-row">
+        <a href="mailto:yuzhouyw@gmail.com" class="cta-link">Email</a>
+        <a href="https://github.com/yuzhouyw" class="cta-link">GitHub</a>
+        <a href="https://scholar.google.com" class="cta-link">Scholar</a>
+        <a href="https://x.com" class="cta-link">Twitter</a>
+      </div>
+    </div>
+
+    <!-- ━━━ FOOTER ━━━ -->
+    <div class="mondrian-footer">
+      <div class="f-cell">&copy; 2026 Yuzhou Wang</div>
+      <div class="f-blue"></div>
+      <div class="f-cell" style="justify-content:center">Hong Kong</div>
+      <div class="f-coral"></div>
+    </div>
+
+  </div>
+
+  <!-- ━━━ GENERATIVE MONDRIAN (JS-populated on desktop >= 1024px) ━━━ -->
+  <div id="generative-layout" style="display:none">
+    <nav class="gen-nav">
+      <div class="gen-nav-brand">
+        <div class="gen-nav-mark">語</div>
+        Yuzhou Wang
+      </div>
+      <div class="gen-nav-links">
+        <a href="#" data-scroll="research-feature">Research</a>
+        <a href="#" data-scroll="project-kintone-project">Projects</a>
+        <a href="#" data-scroll="languages">Languages</a>
+      </div>
+      <a href="mailto:yuzhouyw@gmail.com" class="gen-nav-cta">Contact</a>
+    </nav>
+    <div id="mondrian-container"></div>
+  </div>
+
+  <!-- Content data for client engine -->
+  <div id="content-data" data-content={contentData} hidden></div>
+
+  <!-- Client-side layout engine + UI -->
+  <script>
+    import { generateLayout } from '../lib/layout-engine';
+    import { renderGrid } from '../lib/renderer';
+    import { createPRNG } from '../lib/seed';
+    import type { ContentNode, SectionInput } from '../lib/types';
+
+    const DESKTOP_BP = 1024;
+    const ACCENT_COLORS = ['blue', 'coral', 'yellow', 'lavender', 'sage', 'peach', 'rose'] as const;
+
+    let currentMode: 'grid' | 'generative' = 'grid';
+    let generativeRendered = false;
+
+    function getContentData() {
+      return JSON.parse(document.getElementById('content-data')!.getAttribute('data-content')!);
+    }
+
+    function pickColor(prng: () => number) {
+      return ACCENT_COLORS[Math.floor(prng() * ACCENT_COLORS.length)];
+    }
+
+    /**
+     * Build sections in narrative order. Each section gets its own
+     * Mondrian subdivision band. PRNG assigns accent/content colors.
+     *
+     * Section heights (weights → approx viewport heights):
+     *   hero 3.0 → ~100vh  |  research 3.0 → ~100vh
+     *   projects 2.1 → ~70vh  |  languages 0.6 → ~20vh
+     *   cta 1.3 → ~43vh
+     */
+    function buildSections(prng: () => number): { sections: SectionInput[]; allNodes: ContentNode[] } {
+      const data = getContentData();
+      const allNodes: ContentNode[] = [];
+
+      // ── Hero ──────────────────────────────────────────────
+      const heroNodes: ContentNode[] = [
+        { id: 'hero', type: 'hero', priority: 10, color: 'surface' },
+        { id: 'accent-hero-0', type: 'accent', priority: 1, color: pickColor(prng) },
+        { id: 'accent-hero-1', type: 'accent', priority: 1, color: pickColor(prng) },
+      ];
+
+      // ── Research ──────────────────────────────────────────
+      const researchNodes: ContentNode[] = [
+        { id: 'research-feature', type: 'research-feature', priority: 8, color: 'blue' },
+      ];
+      // PRNG: one paper may get a blue background
+      const bluePaperIdx = prng() < 0.5 ? Math.floor(prng() * data.papers.length) : -1;
+      data.papers.forEach((p: any, i: number) => {
+        researchNodes.push({
+          id: `paper-${p.id}`, type: 'research', priority: 6,
+          color: i === bluePaperIdx ? 'blue' : 'surface', data: p,
+        });
+      });
+      researchNodes.push({ id: 'accent-research', type: 'accent', priority: 1, color: pickColor(prng) });
+
+      // ── Projects ──────────────────────────────────────────
+      const projectNodes: ContentNode[] = [];
+      const coralIdx = Math.floor(prng() * data.projects.length);
+      data.projects.forEach((p: any, i: number) => {
+        projectNodes.push({
+          id: `project-${p.id}`, type: 'project', priority: 5,
+          color: i === coralIdx ? 'coral' : 'surface', data: p,
+        });
+      });
+      projectNodes.push({ id: 'accent-projects', type: 'accent', priority: 1, color: pickColor(prng) });
+
+      // ── Languages ─────────────────────────────────────────
+      const langNodes: ContentNode[] = [
+        { id: 'languages', type: 'languages', priority: 6, color: 'surface', data: data.languages },
+      ];
+
+      // ── CTA ───────────────────────────────────────────────
+      const ctaNodes: ContentNode[] = [
+        { id: 'cta', type: 'cta', priority: 6, color: 'surface' },
+        { id: 'accent-cta', type: 'accent', priority: 1, color: pickColor(prng) },
+      ];
+
+      const sections: SectionInput[] = [
+        { nodes: heroNodes, heightWeight: 3.0 },
+        { nodes: researchNodes, heightWeight: 3.0 },
+        { nodes: projectNodes, heightWeight: 2.1 },
+        { nodes: langNodes, heightWeight: 2.0 },
+        { nodes: ctaNodes, heightWeight: 1.3 },
+      ];
+
+      for (const sec of sections) allNodes.push(...sec.nodes);
+      return { sections, allNodes };
+    }
+
+    function switchToGrid() {
+      if (currentMode === 'grid') return;
+      currentMode = 'grid';
+      document.getElementById('css-grid-layout')!.style.display = '';
+      document.getElementById('generative-layout')!.style.display = 'none';
+    }
+
+    function switchToGenerative() {
+      document.getElementById('css-grid-layout')!.style.display = 'none';
+      document.getElementById('generative-layout')!.style.display = '';
+      currentMode = 'generative';
+
+      if (generativeRendered) return;
+
+      const container = document.getElementById('mondrian-container')!;
+      const vw = Math.min(window.innerWidth, 1600);
+      const vh = window.innerHeight;
+      const prng = createPRNG();
+      const { sections, allNodes } = buildSections(prng);
+      const cells = generateLayout(vw, vh, sections, prng);
+      const nodeMap = new Map(allNodes.map((n) => [n.id, n]));
+      renderGrid(container, cells, nodeMap);
+
+      // Stagger cell entrance animation by DOM order
+      const cellEls = container.querySelectorAll('.cell');
+      cellEls.forEach((el, i) => {
+        (el as HTMLElement).style.animationDelay = `${i * 0.06}s`;
+      });
+
+      generativeRendered = true;
+    }
+
+    // Init: desktop gets generative, mobile keeps CSS Grid
+    if (window.innerWidth >= DESKTOP_BP) {
+      switchToGenerative();
+    }
+
+    // Generative nav: scroll to cell by data-scroll attribute
+    document.querySelectorAll('[data-scroll]').forEach((link) => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const target = document.querySelector(`[data-id="${(link as HTMLElement).dataset.scroll}"]`);
+        target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+
+    // CSS Grid scroll reveal (for fallback mode)
+    const revealObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry, i) => {
+          if (entry.isIntersecting) {
+            setTimeout(() => entry.target.classList.add('visible'), i * 60);
+            revealObserver.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.06 }
+    );
+    document.querySelectorAll('.reveal').forEach((el) => revealObserver.observe(el));
+
+    // Scroll progress indicator
+    const sp = document.querySelector('.scroll-progress');
+    const prog = document.getElementById('progress');
+    window.addEventListener(
+      'scroll',
+      () => {
+        const denom = document.documentElement.scrollHeight - window.innerHeight;
+        const pct = denom > 0 ? Math.round((window.scrollY / denom) * 100) : 0;
+        if (prog) prog.textContent = String(pct);
+        sp?.classList.toggle('show', window.scrollY > 200);
+      },
+      { passive: true }
+    );
+
+    // Debounced resize: switch modes at 1024px threshold
+    let resizeTimer: number = 0;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(() => {
+        if (window.innerWidth < DESKTOP_BP) {
+          switchToGrid();
+        } else if (currentMode === 'grid') {
+          switchToGenerative();
+        }
+      }, 250);
+    });
+  </script>
+</Base>

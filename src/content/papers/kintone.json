@@ -1,0 +1,9 @@
+{
+  "title": "KINTONE: Rule-Based Kinyarwanda Tone Diacritization",
+  "venue": "AfricaNLP",
+  "year": 2025,
+  "authors": "Y. Wang, F. Mpiranya",
+  "meta": "Zero-shot engine",
+  "priority": 7,
+  "color": "surface"
+}
