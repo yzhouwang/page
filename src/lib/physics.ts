@@ -18,9 +18,9 @@ const { Engine, Bodies, Body, Composite, Runner } = Matter;
 
 const CURSOR_RADIUS = 150;
 const MAX_DISPLACEMENT = 15;
-const SPRING_STIFFNESS = 0.02;
-const SPRING_DAMPING = 0.2;
-const REPULSION_STRENGTH = 0.15;
+const SPRING_STIFFNESS = 0.0002;
+const SPRING_DAMPING = 0.15;
+const REPULSION_STRENGTH = 0.003;
 const DISPLACEMENT_THRESHOLD = 2; // px — below this, cell is "at rest"
 
 interface CellPhysics {
@@ -46,6 +46,12 @@ export function initPhysics(container: HTMLElement): PhysicsInstance {
 
   const cellEls = container.querySelectorAll<HTMLElement>('.cell');
   const cells: CellPhysics[] = [];
+
+  // Clear entrance animation so physics transforms take effect.
+  // CSS animation fill-mode:both overrides inline styles in the cascade.
+  for (const el of cellEls) {
+    el.style.animation = 'none';
+  }
 
   for (const el of cellEls) {
     const left = parseFloat(el.style.left);
@@ -95,7 +101,7 @@ export function initPhysics(container: HTMLElement): PhysicsInstance {
   document.addEventListener('mousemove', onMouseMove, { passive: true });
   container.addEventListener('mouseleave', onMouseLeave, { passive: true });
 
-  // Physics loop — runs each frame via Matter.js runner
+  // Apply forces before each engine step
   const beforeUpdate = () => {
     for (const cell of cells) {
       const { body, anchorX, anchorY } = cell;
@@ -121,10 +127,15 @@ export function initPhysics(container: HTMLElement): PhysicsInstance {
           y: (cdy / dist) * factor * body.mass,
         });
       }
+    }
+  };
 
-      // Clamp displacement
-      const dispX = pos.x - anchorX;
-      const dispY = pos.y - anchorY;
+  // Clamp after integration so bodies can't overshoot the 15px limit
+  const afterUpdate = () => {
+    for (const cell of cells) {
+      const { body, anchorX, anchorY } = cell;
+      const dispX = body.position.x - anchorX;
+      const dispY = body.position.y - anchorY;
       const dispDist = Math.sqrt(dispX * dispX + dispY * dispY);
 
       if (dispDist > MAX_DISPLACEMENT) {
@@ -139,6 +150,7 @@ export function initPhysics(container: HTMLElement): PhysicsInstance {
   };
 
   Matter.Events.on(engine, 'beforeUpdate', beforeUpdate);
+  Matter.Events.on(engine, 'afterUpdate', afterUpdate);
 
   // Render loop — sync DOM with physics
   let raf: number;
@@ -182,6 +194,7 @@ export function initPhysics(container: HTMLElement): PhysicsInstance {
       document.removeEventListener('mousemove', onMouseMove);
       container.removeEventListener('mouseleave', onMouseLeave);
       Matter.Events.off(engine, 'beforeUpdate', beforeUpdate);
+      Matter.Events.off(engine, 'afterUpdate', afterUpdate);
 
       // Reset transforms
       for (const cell of cells) {
