@@ -598,21 +598,23 @@
   color: var(--text-ghost);
 }
 .l-native .l-label { color: rgba(17, 17, 17, 0.4); }
-.l-bar {
-  width: 20px;
-  height: 2px;
-  margin: 8px auto 0;
-  background: rgba(0, 0, 0, 0.06);
-  position: relative;
-  overflow: hidden;
+.l-blocks {
+  display: flex;
+  gap: 3px;
+  justify-content: center;
+  margin-top: 8px;
 }
-.l-fill {
-  height: 100%;
-  position: absolute;
-  left: 0;
-  top: 0;
+.l-block {
+  width: 6px;
+  height: 6px;
+  background: rgba(0, 0, 0, 0.06);
+}
+.l-block--filled {
   background: var(--text);
-  opacity: 0.15;
+  opacity: 0.18;
+}
+.l-native .l-block--filled {
+  opacity: 0.35;
 }
 
 .l-legend {
@@ -635,9 +637,9 @@
   align-items: center;
   gap: 8px;
 }
-.l-legend .lg-n::before { content: ''; width: 20px; height: 3px; background: var(--blue); }
-.l-legend .lg-f::before { content: ''; width: 14px; height: 3px; background: var(--text); opacity: 0.2; }
-.l-legend .lg-i::before { content: ''; width: 8px; height: 3px; background: var(--text); opacity: 0.1; }
+.l-legend .lg-n::before { content: ''; width: 6px; height: 6px; background: var(--text); opacity: 0.35; }
+.l-legend .lg-f::before { content: ''; width: 6px; height: 6px; background: var(--text); opacity: 0.18; }
+.l-legend .lg-i::before { content: ''; width: 6px; height: 6px; background: var(--text); opacity: 0.1; }
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    CTA — Mondrian composition #5
@@ -953,6 +955,12 @@
 }
 .gen-nav-cta:hover { opacity: 0.7; }
 
+/* ━━━ Layout crossfade ━━━ */
+/* Duration must match CROSSFADE_MS in index.astro */
+#css-grid-layout {
+  transition: opacity 0.35s ease;
+}
+
 /* ━━━ Base cell ━━━ */
 .cell {
   animation: cellReveal 0.6s cubic-bezier(0.23, 1, 0.32, 1) both;
@@ -962,6 +970,11 @@
 @keyframes cellReveal {
   from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* Physics active — cursor hint (B) */
+.physics-active .cell {
+  cursor: grab;
 }
 
 /* Physics displacement — mint flash when cell is actively displaced */
@@ -1196,20 +1209,23 @@
   margin-bottom: 4px;
 }
 .lang-card--native .lang-name { color: rgba(17, 17, 17, 0.4); }
-.lang-bar {
-  width: clamp(16px, 60%, 40px);
-  height: 2px;
-  background: rgba(0, 0, 0, 0.06);
-  position: relative;
-  margin-top: 4px;
+.lang-blocks {
+  display: flex;
+  gap: 3px;
+  justify-content: center;
+  margin-top: 6px;
 }
-.lang-fill {
-  height: 100%;
-  position: absolute;
-  left: 0;
-  top: 0;
+.lang-block {
+  width: 6px;
+  height: 6px;
+  background: rgba(0, 0, 0, 0.06);
+}
+.lang-block--filled {
   background: var(--text);
-  opacity: 0.15;
+  opacity: 0.18;
+}
+.lang-card--native .lang-block--filled {
+  opacity: 0.35;
 }
 
 /* ━━━ CTA card ━━━ */
