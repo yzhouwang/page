@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.1.0] - 2026-04-11
+
+### Added
+- Smooth crossfade transition between CSS Grid fallback and generative layout (350ms fade-out, staggered cell reveal)
+- Physics interaction hint: cursor changes to grab on physics-active cells, initial wave pulse nudges cells outward on load
+- Mondrian-style proficiency blocks replace progress bars in language section (5 blocks per language, filled proportional to proficiency)
+
+### Fixed
+- Race condition: rapid mode switching during crossfade no longer leaves both layouts invisible
+- Wave pulse timeout properly cleaned up on physics destroy to prevent stale callbacks
+- Physics initialization delayed until container is visible after crossfade completes
+
 ## [0.2.0.0] - 2026-04-11
 
 ### Added
