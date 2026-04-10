@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.0.0] - 2026-04-11
+
+### Added
+- Matter.js physics engine with cursor repulsion on Mondrian cells
+- Spring constraints anchor cells to layout positions (stiffness 0.0002, damping 0.15)
+- 350px cursor force field displaces nearby cells up to 15px
+- Mint glow indicator on actively displaced cells
+- prefers-reduced-motion disables all physics
+
+### Fixed
+- CSS animation fill-mode cascade no longer blocks physics transforms
+- Force constants tuned for Matter.js Verlet integration (dt² amplification)
+
 ## [0.1.0.0] - 2026-04-10
 
 ### Added
