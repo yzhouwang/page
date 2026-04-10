@@ -132,9 +132,9 @@ These tokens are unique to this design system. No other system has them.
 | --line | 4px | Mondrian line width (grid gap at rest) |
 | --max-displacement | 15px | Maximum physics cell displacement from anchor |
 | --line-range | 0px to 19px | Visual range of Mondrian lines when cells breathe |
-| --spring-stiffness | 0.02 | How fast cells return to anchor |
-| --spring-damping | 0.2 | How quickly oscillation settles |
-| --cursor-radius | 150px | Radius of cursor repulsion force field |
+| --spring-stiffness | 0.0002 | How fast cells return to anchor |
+| --spring-damping | 0.15 | How quickly oscillation settles |
+| --cursor-radius | 350px | Radius of cursor repulsion force field |
 
 The breathing range of the grid (--line + displacement) is a first-class design primitive.
 

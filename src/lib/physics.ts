@@ -3,20 +3,20 @@
  *
  * Each cell becomes a Matter.js body anchored to its layout position
  * by a spring constraint. The cursor exerts a repulsion force within
- * a 150px radius. Cells displace up to 15px, revealing wider grid
+ * a 350px radius. Cells displace up to 15px, revealing wider grid
  * lines as they breathe. Mint flashes on actively displaced cells.
  *
  * Design tokens (from DESIGN.md):
  *   --max-displacement: 15px
  *   --spring-stiffness: 0.02
  *   --spring-damping: 0.2
- *   --cursor-radius: 150px
+ *   --cursor-radius: 350px
  */
 import Matter from 'matter-js';
 
 const { Engine, Bodies, Body, Composite, Runner } = Matter;
 
-const CURSOR_RADIUS = 150;
+const CURSOR_RADIUS = 350;
 const MAX_DISPLACEMENT = 15;
 const SPRING_STIFFNESS = 0.0002;
 const SPRING_DAMPING = 0.15;
