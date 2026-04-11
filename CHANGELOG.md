@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.2.0] - 2026-04-11
+
+### Added
+- Five hidden Easter eggs for curious visitors:
+  - Gravity Collapse: click the 語 mark 5 times to release springs and let cells fall with physics
+  - Zero-Shot Scramble: type "NLP" or "KINTONE" anywhere to scramble headings through Cyrillic, Greek, Devanagari, CJK, Arabic, and Hangul scripts
+  - Comic Sans Designer Mode: hidden toggle in footer corner enables joke styling with chaotic physics (oscillating gravity, jelly springs, random cell shoves)
+  - Console Syntax Tree: styled constituency parse tree and Mondrian banner art printed to DevTools console on load
+  - Kinyarwanda Tone Shift: click trigger block on KINTONE cells to send a multi-color vowel wave (blue/coral/yellow/mint) spreading outward through text
+- Physics engine extensions: gravity collapse with floor/walls containment, restore snap-back, designer mode with 7x weaker springs and random force shoves
+- Generative layout footer matching CSS Grid footer design
+- MutationObserver-based trigger injection for tone shift to catch dynamically rendered cells
+
+### Fixed
+- Text scramble now preserves `<br>` and inline markup in headings (saves innerHTML, restores after animation)
+
 ## [0.2.1.0] - 2026-04-11
 
 ### Added
