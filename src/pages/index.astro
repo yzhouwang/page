@@ -337,6 +337,12 @@ const contentData = JSON.stringify({
       <a href="mailto:yuzhouyw@gmail.com" class="gen-nav-cta">Contact</a>
     </nav>
     <div id="mondrian-container"></div>
+    <div class="gen-footer">
+      <div class="f-cell">&copy; 2026 Yuzhou Wang</div>
+      <div class="f-blue"></div>
+      <div class="f-cell" style="justify-content:center">Hong Kong</div>
+      <div class="f-coral"></div>
+    </div>
   </div>
 
   <!-- Content data for client engine -->
@@ -349,6 +355,13 @@ const contentData = JSON.stringify({
     import { createPRNG } from '../lib/seed';
     import { initPhysics, type PhysicsInstance } from '../lib/physics';
     import type { ContentNode, SectionInput } from '../lib/types';
+    import {
+      initGravityCollapse,
+      initTextScramble,
+      initComicSansMode,
+      initConsoleArt,
+      initToneShift,
+    } from '../lib/easter-eggs';
 
     const DESKTOP_BP = 1024;
     const CROSSFADE_MS = 350; // sync with #css-grid-layout transition in mondrian.css
@@ -560,5 +573,12 @@ const contentData = JSON.stringify({
         }
       }, 250);
     });
+
+    // ━━━ Easter eggs (v0.3.0) ━━━
+    initConsoleArt();
+    initGravityCollapse(() => physics);
+    initTextScramble();
+    initComicSansMode(() => physics);
+    initToneShift();
   </script>
 </Base>
