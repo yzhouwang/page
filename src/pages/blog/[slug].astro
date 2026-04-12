@@ -1,0 +1,76 @@
+---
+import BlogLayout from '../../layouts/BlogLayout.astro';
+import CodeBlock from '../../components/mdx/CodeBlock.astro';
+import { getPublishedPosts } from '../../lib/blog';
+
+export async function getStaticPaths() {
+  const posts = await getPublishedPosts();
+  return posts.map((post, i) => ({
+    params: { slug: post.slug },
+    props: {
+      post,
+      prev: posts[i + 1] ?? null,
+      next: posts[i - 1] ?? null,
+    },
+  }));
+}
+
+const { post, prev, next } = Astro.props;
+const { Content, remarkPluginFrontmatter } = await post.render();
+
+function formatDate(date: Date): string {
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+}
+---
+
+<BlogLayout title={post.data.title} description={post.data.description} ogType="article">
+  <div class="post-layout">
+    <article class="post-content">
+      <h1 class="post-title">{post.data.title}</h1>
+      <div class="post-prose">
+        <Content components={{ pre: CodeBlock }} />
+      </div>
+    </article>
+
+    <aside class="post-sidebar">
+      <div class="post-sidebar-label">Published</div>
+      <div class="post-sidebar-date">{formatDate(post.data.date)}</div>
+
+      {remarkPluginFrontmatter?.minutesRead && (
+        <div class="post-sidebar-reading">{remarkPluginFrontmatter.minutesRead}</div>
+      )}
+
+      {post.data.tags && post.data.tags.length > 0 && (
+        <>
+          <div class="post-sidebar-label" style="margin-top: var(--sp-sm)">Tags</div>
+          <div class="post-sidebar-tags">
+            {post.data.tags.map((tag) => (
+              <span class="post-sidebar-tag" data-color={post.data.color}>{tag}</span>
+            ))}
+          </div>
+        </>
+      )}
+    </aside>
+  </div>
+
+  {(prev || next) && (
+    <nav class="post-nav">
+      {prev ? (
+        <a href={`${import.meta.env.BASE_URL}/blog/${prev.slug}`} class="post-nav-link">
+          <div class="post-nav-label">&larr; Previous</div>
+          <div class="post-nav-title">{prev.data.title}</div>
+        </a>
+      ) : <div />}
+      {next ? (
+        <a href={`${import.meta.env.BASE_URL}/blog/${next.slug}`} class="post-nav-link post-nav-next">
+          <div class="post-nav-label">Next &rarr;</div>
+          <div class="post-nav-title">{next.data.title}</div>
+        </a>
+      ) : <div />}
+    </nav>
+  )}
+</BlogLayout>
