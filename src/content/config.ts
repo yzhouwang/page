@@ -44,6 +44,8 @@ const blog = defineCollection({
     date: z.date(),
     tags: z.array(z.string()).optional(),
     description: z.string(),
+    color: z.enum(['blue', 'coral', 'yellow', 'surface']).default('surface'),
+    draft: z.boolean().default(false),
   }),
 });
 
