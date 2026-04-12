@@ -1,0 +1,17 @@
+---
+interface Props {
+  href: string;
+  title: string;
+  description?: string;
+}
+
+const { href, title, description } = Astro.props;
+
+const displayUrl = new URL(href).hostname;
+---
+
+<a href={href} target="_blank" rel="noopener noreferrer" class="link-card">
+  <div class="link-card-title">{title}</div>
+  {description && <div class="link-card-desc">{description}</div>}
+  <div class="link-card-url">{displayUrl}</div>
+</a>

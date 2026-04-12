@@ -1,0 +1,14 @@
+---
+interface Props {
+  filename?: string;
+}
+
+const { filename } = Astro.props;
+---
+
+<div class="code-block">
+  {filename && <div class="code-block-header">{filename}</div>}
+  <div class="code-block-body">
+    <slot />
+  </div>
+</div>

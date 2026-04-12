@@ -1,0 +1,344 @@
+---
+interface Props {
+  data: string;
+  id?: string;
+}
+
+const { data, id } = Astro.props;
+const vizId = id || `tone-viz-${Math.random().toString(36).slice(2, 8)}`;
+---
+
+<figure class="tone-viz" id={vizId} data-config={data} aria-label="Tone derivation visualizer">
+  <div class="tone-viz-header">
+    <span class="tone-viz-word"></span>
+    <span class="tone-viz-gloss"></span>
+  </div>
+  <div class="tone-viz-morphemes"></div>
+  <div class="tone-viz-grid"></div>
+  <div class="tone-viz-step-info" aria-live="polite">
+    <div class="tone-viz-step-meta">
+      <span class="tone-viz-step-badge"></span>
+      <span class="tone-viz-rule-badge" hidden></span>
+    </div>
+    <p class="tone-viz-step-desc"></p>
+  </div>
+  <div class="tone-viz-controls">
+    <button class="tone-viz-btn" data-action="prev" aria-label="Previous derivation step" disabled>&larr; Prev</button>
+    <div class="tone-viz-dots"></div>
+    <button class="tone-viz-btn" data-action="next" aria-label="Next derivation step">Next &rarr;</button>
+  </div>
+</figure>
+
+<style is:global>
+  .tone-viz {
+    margin: 2em 0;
+    background: var(--grid);
+    padding: var(--line);
+  }
+
+  .tone-viz-header {
+    background: var(--surface);
+    padding: 16px 20px;
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .tone-viz-word {
+    font-family: var(--font-display);
+    font-size: clamp(20px, 3vw, 28px);
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+  .tone-viz-gloss {
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+
+  .tone-viz-morphemes {
+    display: grid;
+    gap: var(--line);
+    background: var(--grid);
+    margin-top: var(--line);
+  }
+  .tone-viz-morph-label {
+    background: var(--surface-alt);
+    padding: 4px 8px;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-ghost);
+    text-align: center;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .tone-viz-grid {
+    display: grid;
+    gap: var(--line);
+    background: var(--grid);
+    margin-top: var(--line);
+  }
+  .tone-viz-mora {
+    background: var(--surface);
+    padding: 16px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    transition: background-color 0.3s ease;
+    min-width: 0;
+  }
+  .tone-viz-mora[data-tone="H"] {
+    background: var(--blue);
+  }
+  .tone-viz-mora[data-stem="true"] {
+    border-left: var(--line) solid var(--coral);
+  }
+  .tone-viz-mora-text {
+    font-family: var(--font-display);
+    font-size: clamp(15px, 2.5vw, 20px);
+    font-weight: 600;
+  }
+  .tone-viz-mora-tone {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-ghost);
+  }
+  .tone-viz-mora[data-tone="H"] .tone-viz-mora-tone {
+    color: var(--text);
+  }
+
+  .tone-viz-step-info {
+    background: var(--surface);
+    padding: 16px 20px;
+    margin-top: var(--line);
+  }
+  .tone-viz-step-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .tone-viz-step-badge {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-ghost);
+  }
+  .tone-viz-rule-badge {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    background: var(--yellow);
+    padding: 2px 8px;
+    color: var(--text);
+  }
+  .tone-viz-step-desc {
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .tone-viz-controls {
+    background: var(--surface);
+    padding: 12px 20px;
+    margin-top: var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .tone-viz-btn {
+    font-family: var(--font-display);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    background: var(--surface);
+    border: var(--line) solid var(--grid);
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    color: var(--text);
+  }
+  .tone-viz-btn:hover:not(:disabled) {
+    background: var(--surface-alt);
+  }
+  .tone-viz-btn:disabled {
+    opacity: 0.3;
+    cursor: default;
+  }
+  .tone-viz-dots {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .tone-viz-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--surface-alt);
+    transition: background-color 0.2s ease;
+  }
+  .tone-viz-dot.active {
+    background: var(--blue);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tone-viz-mora {
+      transition: none !important;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .tone-viz-mora {
+      padding: 12px 6px;
+    }
+    .tone-viz-header {
+      padding: 12px 16px;
+    }
+    .tone-viz-step-info {
+      padding: 12px 16px;
+    }
+    .tone-viz-controls {
+      padding: 10px 16px;
+    }
+    .tone-viz-btn {
+      padding: 6px 10px;
+      font-size: 10px;
+    }
+  }
+</style>
+
+<script>
+  function initVisualizer(root: HTMLElement) {
+    const config = JSON.parse(root.dataset.config!);
+    let currentStep = 0;
+
+    const header = root.querySelector('.tone-viz-header')!;
+    const wordEl = root.querySelector('.tone-viz-word')!;
+    const glossEl = root.querySelector('.tone-viz-gloss')!;
+    const morphRow = root.querySelector('.tone-viz-morphemes') as HTMLElement;
+    const grid = root.querySelector('.tone-viz-grid') as HTMLElement;
+    const stepBadge = root.querySelector('.tone-viz-step-badge')!;
+    const ruleBadge = root.querySelector('.tone-viz-rule-badge') as HTMLElement;
+    const stepDesc = root.querySelector('.tone-viz-step-desc')!;
+    const dotsContainer = root.querySelector('.tone-viz-dots')!;
+    const prevBtn = root.querySelector('[data-action="prev"]') as HTMLButtonElement;
+    const nextBtn = root.querySelector('[data-action="next"]') as HTMLButtonElement;
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const moraCount = config.steps[0].morae.length;
+
+    // Set header
+    wordEl.textContent = config.word;
+    glossEl.textContent = `"${config.gloss}"`;
+
+    // Set grid columns
+    const cols = `repeat(${moraCount}, 1fr)`;
+    grid.style.gridTemplateColumns = cols;
+    morphRow.style.gridTemplateColumns = cols;
+
+    // Build morpheme labels
+    const morae = config.steps[0].morae;
+    const morphemeRuns: { morpheme: string; start: number; count: number }[] = [];
+    for (let i = 0; i < morae.length; i++) {
+      const m = morae[i].morpheme;
+      if (morphemeRuns.length > 0 && morphemeRuns[morphemeRuns.length - 1].morpheme === m) {
+        morphemeRuns[morphemeRuns.length - 1].count++;
+      } else {
+        morphemeRuns.push({ morpheme: m, start: i + 1, count: 1 });
+      }
+    }
+    morphRow.innerHTML = morphemeRuns.map(r =>
+      `<div class="tone-viz-morph-label" style="grid-column: ${r.start} / span ${r.count}">${r.morpheme}</div>`
+    ).join('');
+
+    // Build mora cells
+    grid.innerHTML = morae.map((m: any, i: number) => {
+      const isFirstStem = m.morpheme === 'stem' && (i === 0 || morae[i - 1].morpheme !== 'stem');
+      return `<div class="tone-viz-mora" data-tone="${m.tone}" data-index="${i}" ${isFirstStem ? 'data-stem="true"' : ''}
+        aria-label="mora ${m.text}, ${m.tone === 'H' ? 'high' : 'low'} tone">
+        <span class="tone-viz-mora-text">${m.text}</span>
+        <span class="tone-viz-mora-tone">${m.tone}</span>
+      </div>`;
+    }).join('');
+
+    const moraEls = grid.querySelectorAll('.tone-viz-mora');
+
+    // Build dots
+    dotsContainer.innerHTML = config.steps.map((_: any, i: number) =>
+      `<div class="tone-viz-dot ${i === 0 ? 'active' : ''}" data-step="${i}"></div>`
+    ).join('');
+    const dots = dotsContainer.querySelectorAll('.tone-viz-dot');
+
+    function render(stepIndex: number, direction: string) {
+      const step = config.steps[stepIndex];
+
+      step.morae.forEach((mora: any, i: number) => {
+        const el = moraEls[i] as HTMLElement;
+        const wasH = el.dataset.tone === 'H';
+        const isH = mora.tone === 'H';
+
+        if (!prefersReducedMotion && direction === 'forward' && !wasH && isH) {
+          el.style.transitionDelay = `${i * 80}ms`;
+        } else {
+          el.style.transitionDelay = '0ms';
+        }
+
+        el.dataset.tone = mora.tone;
+        el.querySelector('.tone-viz-mora-tone')!.textContent = mora.tone;
+        el.setAttribute('aria-label', `mora ${mora.text}, ${mora.tone === 'H' ? 'high' : 'low'} tone`);
+      });
+
+      stepBadge.textContent = `Step ${stepIndex + 1} of ${config.steps.length}`;
+      if (step.rule) {
+        ruleBadge.textContent = step.rule;
+        ruleBadge.hidden = false;
+      } else {
+        ruleBadge.hidden = true;
+      }
+      stepDesc.textContent = step.description;
+
+      dots.forEach((dot, i) => {
+        dot.classList.toggle('active', i === stepIndex);
+      });
+
+      prevBtn.disabled = stepIndex === 0;
+      nextBtn.disabled = stepIndex === config.steps.length - 1;
+    }
+
+    prevBtn.addEventListener('click', () => {
+      if (currentStep > 0) {
+        currentStep--;
+        render(currentStep, 'backward');
+      }
+    });
+
+    nextBtn.addEventListener('click', () => {
+      if (currentStep < config.steps.length - 1) {
+        currentStep++;
+        render(currentStep, 'forward');
+      }
+    });
+
+    render(0, 'initial');
+  }
+
+  document.querySelectorAll('.tone-viz').forEach(el => initVisualizer(el as HTMLElement));
+</script>
