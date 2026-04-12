@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.0.0] - 2026-04-12
+
+### Added
+- Full blog system with MDX support, reading time estimation, and RSS feed
+- Blog layout with CSS-only hamburger menu, sidebar metadata, and prev/next navigation
+- Five MDX components for rich content: CalloutTile, AsideTile, CodeBlock, FigureTile, LinkCard
+- Interactive Tone Derivation Visualizer for Kinyarwanda linguistics, with step-through animation and responsive grid
+- Two seed posts: physics engine explainer and Kinyarwanda tone spreading primer with 4 interactive examples
+- Blog feed section on homepage (both CSS grid and generative layouts)
+- Playwright E2E test suite (28 tests across desktop and mobile viewports)
+- Draft filtering and centralized blog helpers
+
+### Fixed
+- BASE_URL path joining across blog routes, RSS feed, and navigation links
+- Blog nav dropdown positioning for resilient mobile layout
+
 ## [0.2.2.0] - 2026-04-11
 
 ### Added

@@ -1,0 +1,17 @@
+---
+import { Image } from 'astro:assets';
+
+interface Props {
+  src: ImageMetadata;
+  alt: string;
+  caption?: string;
+  color?: 'blue' | 'coral' | 'yellow' | 'surface';
+}
+
+const { src, alt, caption, color = 'surface' } = Astro.props;
+---
+
+<figure class="figure-tile">
+  <Image src={src} alt={alt} widths={[400, 800, 1200]} sizes="(max-width: 768px) 100vw, 800px" />
+  {caption && <figcaption class="figure-tile-caption">{caption}</figcaption>}
+</figure>

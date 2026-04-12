@@ -1,11 +1,15 @@
 ---
 import Base from '../layouts/Base.astro';
+import '../styles/mondrian.css';
 import { getCollection } from 'astro:content';
 import { filledBlocks } from '../lib/lang-blocks';
+import { getPublishedPosts } from '../lib/blog';
 
 const papers = await getCollection('papers');
 const projects = await getCollection('projects');
 const languages = await getCollection('languages');
+const allPosts = await getPublishedPosts();
+const latestPost = allPosts[0] ?? null;
 
 // Explicit display ordering (Astro collections return alphabetically by filename)
 const paperOrder = ['human-ai-writing', 'kintone', 'compliance-agents'];
@@ -75,10 +79,15 @@ const contentData = JSON.stringify({
           <div class="h-nav-mark">語</div>
           Yuzhou Wang
         </div>
+        <input type="checkbox" id="h-menu-toggle" class="h-menu-checkbox" />
+        <label for="h-menu-toggle" class="h-menu-btn" aria-label="Toggle menu">
+          <span></span><span></span><span></span>
+        </label>
         <div class="h-nav-links">
           <a href="#research">Research</a>
           <a href="#projects">Projects</a>
           <a href="#languages">Languages</a>
+          <a href={`${import.meta.env.BASE_URL}/blog`}>Blog</a>
         </div>
         <a href="#contact" class="h-nav-cta">Contact</a>
       </nav>
@@ -292,6 +301,38 @@ const contentData = JSON.stringify({
       </div>
     </div>
 
+    <!-- ━━━ BLOG FEED ━━━ -->
+    {allPosts.length > 0 && (
+      <div class="mondrian-blog" id="blog">
+        <div class="s-header reveal">
+          <div class="s-block" style="background:var(--coral)"></div>
+          <h2>Writing</h2>
+        </div>
+        <div class="blog-feed-row">
+          {allPosts.map((post) => (
+            <a href={`${import.meta.env.BASE_URL}/blog/${post.slug}`} class="blog-feed-card reveal" data-color={post.data.color}>
+              <span class="blog-feed-date">
+                {post.data.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+              </span>
+              <span class="blog-feed-title">{post.data.title}</span>
+              <span class="blog-feed-desc">{post.data.description}</span>
+              {post.data.tags && (
+                <span class="blog-feed-tags">
+                  {post.data.tags.map((tag) => (
+                    <span class="blog-feed-tag">{tag}</span>
+                  ))}
+                </span>
+              )}
+            </a>
+          ))}
+          <a href={`${import.meta.env.BASE_URL}/blog`} class="blog-feed-all reveal">
+            <span class="blog-feed-all-label">All Posts</span>
+            <span class="blog-feed-all-arrow">&rarr;</span>
+          </a>
+        </div>
+      </div>
+    )}
+
     <!-- ━━━ CTA ━━━ -->
     <div class="mondrian-cta" id="contact">
       <div class="cta-text reveal">
@@ -304,6 +345,12 @@ const contentData = JSON.stringify({
       <div class="cta-accent">
         <span class="cta-accent-glyph">語</span>
       </div>
+      {latestPost && (
+        <a href={`${import.meta.env.BASE_URL}/blog/${latestPost.slug}`} class="cta-latest-post">
+          <span class="cta-latest-label">Latest Post</span>
+          <span class="cta-latest-title">{latestPost.data.title}</span>
+        </a>
+      )}
       <div class="cta-links-row">
         <a href="mailto:yuzhouyw@gmail.com" class="cta-link">Email</a>
         <a href="https://github.com/yuzhouyw" class="cta-link">GitHub</a>
@@ -333,10 +380,56 @@ const contentData = JSON.stringify({
         <a href="#" data-scroll="research-feature">Research</a>
         <a href="#" data-scroll="project-kintone-project">Projects</a>
         <a href="#" data-scroll="languages">Languages</a>
+        <a href={`${import.meta.env.BASE_URL}/blog`}>Blog</a>
       </div>
       <a href="mailto:yuzhouyw@gmail.com" class="gen-nav-cta">Contact</a>
     </nav>
     <div id="mondrian-container"></div>
+    {allPosts.length > 0 && (
+      <div class="mondrian-blog gen-blog">
+        <div class="s-header">
+          <div class="s-block" style="background:var(--coral)"></div>
+          <h2>Writing</h2>
+        </div>
+        <div class="blog-feed-row">
+          {allPosts.map((post) => (
+            <a href={`${import.meta.env.BASE_URL}/blog/${post.slug}`} class="blog-feed-card" data-color={post.data.color}>
+              <span class="blog-feed-date">
+                {post.data.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+              </span>
+              <span class="blog-feed-title">{post.data.title}</span>
+              <span class="blog-feed-desc">{post.data.description}</span>
+              {post.data.tags && (
+                <span class="blog-feed-tags">
+                  {post.data.tags.map((tag) => (
+                    <span class="blog-feed-tag">{tag}</span>
+                  ))}
+                </span>
+              )}
+            </a>
+          ))}
+          <a href={`${import.meta.env.BASE_URL}/blog`} class="blog-feed-all">
+            <span class="blog-feed-all-label">All Posts</span>
+            <span class="blog-feed-all-arrow">&rarr;</span>
+          </a>
+        </div>
+      </div>
+    )}
+    <div class="gen-cta">
+      <div class="gen-cta-text">
+        <h2>Let's<br />collaborate.</h2>
+        <p>Open to research collaborations in low-resource NLP, computational morphology, and AI compliance systems.</p>
+      </div>
+      <div class="gen-cta-accent">
+        <span class="cta-accent-glyph">語</span>
+      </div>
+      <div class="gen-cta-links">
+        <a href="mailto:yuzhouyw@gmail.com" class="cta-link">Email</a>
+        <a href="https://github.com/yuzhouyw" class="cta-link">GitHub</a>
+        <a href="https://scholar.google.com" class="cta-link">Scholar</a>
+        <a href="https://x.com" class="cta-link">Twitter</a>
+      </div>
+    </div>
     <div class="gen-footer">
       <div class="f-cell">&copy; 2026 Yuzhou Wang</div>
       <div class="f-blue"></div>
@@ -430,18 +523,11 @@ const contentData = JSON.stringify({
         { id: 'languages', type: 'languages', priority: 6, color: 'surface', data: data.languages },
       ];
 
-      // ── CTA ───────────────────────────────────────────────
-      const ctaNodes: ContentNode[] = [
-        { id: 'cta', type: 'cta', priority: 6, color: 'surface' },
-        { id: 'accent-cta', type: 'accent', priority: 1, color: pickColor(prng) },
-      ];
-
       const sections: SectionInput[] = [
         { nodes: heroNodes, heightWeight: 3.0 },
         { nodes: researchNodes, heightWeight: 3.0 },
         { nodes: projectNodes, heightWeight: 2.1 },
         { nodes: langNodes, heightWeight: 2.0 },
-        { nodes: ctaNodes, heightWeight: 1.3 },
       ];
 
       for (const sec of sections) allNodes.push(...sec.nodes);

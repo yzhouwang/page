@@ -1,0 +1,65 @@
+---
+title: "Why I Built a Physics Engine for My Portfolio"
+date: 2026-04-11
+tags: ["design", "physics", "web"]
+description: "Most portfolio sites are static grids. Mine uses Matter.js to make every cell a physics body you can push around."
+color: blue
+---
+
+import CalloutTile from '../../components/mdx/CalloutTile.astro';
+import AsideTile from '../../components/mdx/AsideTile.astro';
+import LinkCard from '../../components/mdx/LinkCard.astro';
+
+Every portfolio site I've seen follows the same template. White page, card grid, maybe a dark mode toggle. Clean, professional, forgettable. I wanted something that felt like an object you could hold.
+
+## The Mondrian Idea
+
+Piet Mondrian painted grids. Rectangles of primary color separated by black lines. What's interesting is that Mondrian's compositions aren't random. They follow rules about balance, proportion, and tension. A good Mondrian painting feels like it's about to move but chooses not to.
+
+That's the feeling I wanted. A grid that looks composed but responds to your presence. The black lines between cells aren't just CSS borders. They're the gaps between physics bodies.
+
+<CalloutTile color="blue" title="The Key Insight">
+
+The CSS Grid `gap` property and Mondrian's black lines are the same thing. When cells displace under cursor force, the gaps widen, and the grid breathes. The layout IS the art.
+
+</CalloutTile>
+
+## How It Works
+
+The site uses two layout systems. On mobile and with JavaScript disabled, you get a standard CSS Grid. Clean, accessible, fully readable. On desktop, a generative engine takes over. It uses a seeded PRNG to subdivide the viewport into Mondrian-like rectangles, one composition per session.
+
+Each cell becomes a Matter.js rigid body connected to its layout position by a spring constraint. Move your cursor near a cell, and a repulsion force pushes it away. Release, and the spring pulls it back.
+
+```typescript
+// Spring constraint anchors each cell to its layout position
+const spring = Matter.Constraint.create({
+  pointA: { x: layoutX, y: layoutY },
+  bodyB: cellBody,
+  stiffness: 0.0002,
+  damping: 0.15,
+});
+```
+
+<AsideTile label="Note">
+
+The stiffness value (0.0002) seems tiny, but Matter.js uses Verlet integration which amplifies forces by dt squared. At 60fps that's roughly a 278x multiplier. Getting these constants right took more debugging than the entire layout engine.
+
+</AsideTile>
+
+## What I Learned
+
+Building this taught me something about design systems. Most design tokens are static. Colors, spacing, type scales. They describe how things look at rest. But this site needed tokens for how things move. Spring stiffness, damping, maximum displacement, cursor radius. These are design decisions, not just physics parameters.
+
+The `--max-displacement` token (15px) defines how far cells can breathe. That number controls the visual range of the Mondrian lines from 4px at rest to up to 19px when cells are pushed apart. It's a first-class design primitive.
+
+## Try It
+
+Go to the homepage and move your cursor over the grid. The cells will follow your movement and settle back. If you're on mobile, try the CSS Grid view. Both layouts show the same content, just different compositions.
+
+<LinkCard
+  href="https://github.com/yzhouwang/page"
+  title="View the source on GitHub"
+  description="Astro 4 + Matter.js + seeded Mondrian layout engine. MIT licensed."
+/>
+
+The whole thing is open source. The layout engine, the physics, the Easter eggs (yes, there are Easter eggs). If you're building a portfolio site and want something that feels alive, start with the physics. Everything else follows from there.

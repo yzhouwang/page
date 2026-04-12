@@ -1,16 +1,19 @@
 ---
 import '../styles/global.css';
-import '../styles/mondrian.css';
 
 interface Props {
   title: string;
   description?: string;
+  ogType?: string;
 }
 
 const {
   title,
   description = 'AI researcher and computational linguist. Research in NLP, low-resource languages, and compliance infrastructure.',
+  ogType = 'website',
 } = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 ---
 
 <!doctype html>
@@ -20,9 +23,11 @@ const {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title} — AI & Computational Linguistics</title>
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL.href} />
     <meta property="og:title" content={`${title} — AI & Computational Linguistics`} />
     <meta property="og:description" content={description} />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:url" content={canonicalURL.href} />
     <meta name="twitter:card" content="summary" />
     <link
       rel="icon"

@@ -1,0 +1,13 @@
+---
+interface Props {
+  color?: 'blue' | 'coral' | 'yellow' | 'surface';
+  title?: string;
+}
+
+const { color = 'surface', title } = Astro.props;
+---
+
+<div class="callout-tile" data-color={color}>
+  {title && <div class="callout-tile-title">{title}</div>}
+  <slot />
+</div>

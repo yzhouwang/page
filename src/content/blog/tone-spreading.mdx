@@ -1,0 +1,244 @@
+---
+title: "Tone Spreading in Kinyarwanda: A Visual Primer"
+date: 2026-04-10
+tags: ["nlp", "linguistics", "kinyarwanda"]
+description: "How tonal patterns propagate through vowels in Kinyarwanda, and why it matters for NLP systems processing tonal languages."
+color: coral
+---
+
+import CalloutTile from '../../components/mdx/CalloutTile.astro';
+import AsideTile from '../../components/mdx/AsideTile.astro';
+import LinkCard from '../../components/mdx/LinkCard.astro';
+import ToneVisualizer from '../../components/mdx/ToneVisualizer.astro';
+
+Kinyarwanda is a Bantu language spoken by about 24 million people, primarily in Rwanda. Like many Bantu languages, it uses tone to distinguish meaning. But unlike Mandarin, where tone sits on individual syllables, Kinyarwanda's tone system is dynamic. Tones move.
+
+## The Root Tone
+
+Every Kinyarwanda verb root carries an inherent tone — either High (H) or toneless. The verb *-bóna* ("to see") has a High tone on its first mora. In the infinitive *kubóna*, the H stays put on the root. Nothing moves yet.
+
+<ToneVisualizer
+  id="ex-simple"
+  data={JSON.stringify({
+    word: "kubóna",
+    gloss: "to see",
+    morphemes: "ku-bóna",
+    steps: [
+      {
+        label: "Underlying form",
+        description: "The verb root -bón- carries an inherent High tone on its first mora. The infinitive prefix ku- is toneless.",
+        morae: [
+          { text: "ku", tone: "L", morpheme: "inf" },
+          { text: "bo", tone: "H", morpheme: "stem" },
+          { text: "na", tone: "L", morpheme: "stem" }
+        ]
+      },
+      {
+        label: "Surface form",
+        description: "No object prefixes to spread through — the H stays on the root. This is the base case.",
+        morae: [
+          { text: "ku", tone: "L", morpheme: "inf" },
+          { text: "bo", tone: "H", morpheme: "stem" },
+          { text: "na", tone: "L", morpheme: "stem" }
+        ],
+        rule: "No change"
+      }
+    ]
+  })}
+/>
+
+Click **Next** to step through the derivation. In this simple case, the High tone has nowhere to go. But add an object prefix, and things get interesting.
+
+## Spreading
+
+When a verb has object prefixes after a **short tense prefix** (like the infinitive *ku-*), the root's High tone spreads **leftward** through the macro-stem — the region containing all object prefixes and the stem.
+
+Here's *kubabona* with one object prefix *ba-* ("them"):
+
+<ToneVisualizer
+  id="ex-spread"
+  data={JSON.stringify({
+    word: "kubábóna",
+    gloss: "to see them",
+    morphemes: "ku-ba-bóna",
+    steps: [
+      {
+        label: "Underlying form",
+        description: "The root -bón- has H on its first mora. The object prefix ba- (\"them\") is toneless. The infinitive ku- is toneless.",
+        morae: [
+          { text: "ku", tone: "L", morpheme: "inf" },
+          { text: "ba", tone: "L", morpheme: "object" },
+          { text: "bo", tone: "H", morpheme: "stem" },
+          { text: "na", tone: "L", morpheme: "stem" }
+        ]
+      },
+      {
+        label: "H Spreading",
+        description: "Short prefix ku- triggers leftward spreading. The H from the root spreads left onto the object prefix ba-.",
+        morae: [
+          { text: "ku", tone: "L", morpheme: "inf" },
+          { text: "ba", tone: "H", morpheme: "object" },
+          { text: "bo", tone: "H", morpheme: "stem" },
+          { text: "na", tone: "L", morpheme: "stem" }
+        ],
+        rule: "Spreading"
+      },
+      {
+        label: "Surface form",
+        description: "Result: kubábóna. The H now covers both ba- and bó-, creating a tonal plateau across the macro-stem.",
+        morae: [
+          { text: "ku", tone: "L", morpheme: "inf" },
+          { text: "ba", tone: "H", morpheme: "object" },
+          { text: "bo", tone: "H", morpheme: "stem" },
+          { text: "na", tone: "L", morpheme: "stem" }
+        ],
+        rule: "Surface"
+      }
+    ]
+  })}
+/>
+
+The spreading doesn't stop at one prefix. Add more object prefixes, and the H keeps going:
+
+<ToneVisualizer
+  id="ex-spread-extended"
+  data={JSON.stringify({
+    word: "kuhábabóna",
+    gloss: "to see them (for them)",
+    morphemes: "ku-ha-ba-bóna",
+    steps: [
+      {
+        label: "Underlying form",
+        description: "Two object prefixes: ha- (\"for them\") and ba- (\"them\"). Only the root -bón- has H. Everything else is toneless.",
+        morae: [
+          { text: "ku", tone: "L", morpheme: "inf" },
+          { text: "ha", tone: "L", morpheme: "object" },
+          { text: "ba", tone: "L", morpheme: "object" },
+          { text: "bo", tone: "H", morpheme: "stem" },
+          { text: "na", tone: "L", morpheme: "stem" }
+        ]
+      },
+      {
+        label: "Spread to ba-",
+        description: "H from the root first spreads left to the nearest object prefix ba-.",
+        morae: [
+          { text: "ku", tone: "L", morpheme: "inf" },
+          { text: "ha", tone: "L", morpheme: "object" },
+          { text: "ba", tone: "H", morpheme: "object" },
+          { text: "bo", tone: "H", morpheme: "stem" },
+          { text: "na", tone: "L", morpheme: "stem" }
+        ],
+        rule: "Spreading"
+      },
+      {
+        label: "Spread to ha-",
+        description: "The H continues spreading left to ha-, reaching the edge of the macro-stem.",
+        morae: [
+          { text: "ku", tone: "L", morpheme: "inf" },
+          { text: "ha", tone: "H", morpheme: "object" },
+          { text: "ba", tone: "H", morpheme: "object" },
+          { text: "bo", tone: "H", morpheme: "stem" },
+          { text: "na", tone: "L", morpheme: "stem" }
+        ],
+        rule: "Spreading"
+      },
+      {
+        label: "Surface form",
+        description: "Result: kuhábabóna. The H has spread from the root all the way to the first object prefix, creating a wide tonal plateau.",
+        morae: [
+          { text: "ku", tone: "L", morpheme: "inf" },
+          { text: "ha", tone: "H", morpheme: "object" },
+          { text: "ba", tone: "H", morpheme: "object" },
+          { text: "bo", tone: "H", morpheme: "stem" },
+          { text: "na", tone: "L", morpheme: "stem" }
+        ],
+        rule: "Surface"
+      }
+    ]
+  })}
+/>
+
+<CalloutTile color="coral" title="Why This Matters for NLP">
+
+Most NLP tokenizers treat text as a flat sequence of characters. But in Kinyarwanda, the same consonant-vowel sequence can mean different things depending on tone patterns that span the entire macro-stem. A tokenizer that ignores tone spreading produces ambiguous representations.
+
+</CalloutTile>
+
+## Shifting
+
+Not all tense prefixes trigger spreading. **Long tense prefixes** like *-ā-* (today's past) cause the H to **shift rightward** instead — jumping from the root to the 2nd mora of the macro-stem.
+
+Compare this with Example 2. Same stem, same object prefixes, completely different tone behavior:
+
+<ToneVisualizer
+  id="ex-shift"
+  data={JSON.stringify({
+    word: "twāhakúbonaga",
+    gloss: "we were seeing them",
+    morphemes: "tu-ā-ha-ku-bóna-aga",
+    steps: [
+      {
+        label: "Underlying form",
+        description: "Long tense prefix -ā- (today's past). Two objects: ha- and ku-. The root -bón- carries H. The suffix -aga marks habitual aspect.",
+        morae: [
+          { text: "twā", tone: "L", morpheme: "subject+tense" },
+          { text: "ha", tone: "L", morpheme: "object" },
+          { text: "ku", tone: "L", morpheme: "object" },
+          { text: "bo", tone: "H", morpheme: "stem" },
+          { text: "na", tone: "L", morpheme: "stem" },
+          { text: "ga", tone: "L", morpheme: "ext" }
+        ]
+      },
+      {
+        label: "H Shifting",
+        description: "Long prefix blocks spreading. Instead, H shifts rightward to the 2nd mora of the macro-stem (ku-). The root loses its H.",
+        morae: [
+          { text: "twā", tone: "L", morpheme: "subject+tense" },
+          { text: "ha", tone: "L", morpheme: "object" },
+          { text: "ku", tone: "H", morpheme: "object" },
+          { text: "bo", tone: "L", morpheme: "stem" },
+          { text: "na", tone: "L", morpheme: "stem" },
+          { text: "ga", tone: "L", morpheme: "ext" }
+        ],
+        rule: "Shifting"
+      },
+      {
+        label: "Surface form",
+        description: "Result: twāhakúbonaga. The H has moved from the root to the 2nd object prefix. The stem is now completely toneless.",
+        morae: [
+          { text: "twā", tone: "L", morpheme: "subject+tense" },
+          { text: "ha", tone: "L", morpheme: "object" },
+          { text: "ku", tone: "H", morpheme: "object" },
+          { text: "bo", tone: "L", morpheme: "stem" },
+          { text: "na", tone: "L", morpheme: "stem" },
+          { text: "ga", tone: "L", morpheme: "ext" }
+        ],
+        rule: "Surface"
+      }
+    ]
+  })}
+/>
+
+<AsideTile label="Meeussen's Rule">
+
+When two High tones end up on consecutive morae, Kinyarwanda enforces a constraint: the second H is lowered. This is **Meeussen's Rule**, shared across many Bantu languages including Shona, Luganda, and Chichewa. It prevents tone crowding and maintains the language's rhythmic structure.
+
+</AsideTile>
+
+## Why This Matters
+
+Processing Kinyarwanda tone in NLP systems raises several hard problems.
+
+**Written text omits tone marking.** Standard orthography doesn't mark tone. Readers infer it from context, morphology, and syntactic position. An NLP system must reconstruct tonal information from these cues alone.
+
+**The same string can mean different things.** Without tone disambiguation, downstream tasks like machine translation produce errors. The spreading and shifting rules above show that the tense prefix alone determines where tone lands — information that's invisible in plain text.
+
+**Training data is scarce.** Large tone-annotated corpora for Kinyarwanda don't exist at scale. This pushes research toward rule-based approaches that encode linguistic knowledge directly — which is exactly what the KINTONE project does.
+
+The exciting direction is building tonal awareness into language models for Bantu languages. Not as post-processing, but as a structural feature of the model. Tone is not decoration on top of text. It's grammar.
+
+<LinkCard
+  href="https://en.wikipedia.org/wiki/Kinyarwanda"
+  title="Kinyarwanda on Wikipedia"
+  description="Overview of phonology, grammar, and dialectal variation."
+/>

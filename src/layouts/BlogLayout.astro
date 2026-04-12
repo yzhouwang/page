@@ -1,0 +1,40 @@
+---
+import Base from './Base.astro';
+import '../styles/blog.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  ogType?: string;
+}
+
+const { title, description, ogType } = Astro.props;
+---
+
+<Base title={title} description={description} ogType={ogType}>
+  <div class="blog-shell">
+    <nav class="blog-nav">
+      <a href={import.meta.env.BASE_URL} class="blog-nav-brand">
+        <span class="blog-nav-mark">語</span>
+        Yuzhou Wang
+      </a>
+      <input type="checkbox" id="blog-menu-toggle" class="blog-menu-checkbox" />
+      <label for="blog-menu-toggle" class="blog-menu-btn" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </label>
+      <div class="blog-nav-links">
+        <a href={`${import.meta.env.BASE_URL}/blog`}>Blog</a>
+        <a href={import.meta.env.BASE_URL}>Portfolio</a>
+      </div>
+    </nav>
+    <main class="blog-main">
+      <slot />
+    </main>
+    <footer class="blog-footer">
+      <div class="blog-footer-cell">&copy; 2026 Yuzhou Wang</div>
+      <div class="blog-footer-cell">
+        <a href={`${import.meta.env.BASE_URL}/rss.xml`}>RSS</a>
+      </div>
+    </footer>
+  </div>
+</Base>
